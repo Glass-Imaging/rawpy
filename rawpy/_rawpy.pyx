@@ -197,6 +197,7 @@ IF UNAME_SYSNAME == "Windows":
             libraw_data_t imgdata
             LibRaw()
             int open_buffer(void *buffer, size_t bufsize)
+            int open_bayer(unsigned char *data, unsigned datalen, ushort _raw_width, ushort _raw_height, ushort _left_margin, ushort _top_margin, ushort _right_margin, ushort _bottom_margin, unsigned char procflags, unsigned char bayer_pattern, unsigned unused_bits, unsigned otherflags, unsigned black_level)
             int open_file(const wchar_t *fname)
             int unpack()
             int unpack_thumb()
@@ -214,6 +215,7 @@ ELSE:
             libraw_data_t imgdata
             LibRaw()
             int open_buffer(void *buffer, size_t bufsize)
+            int open_bayer(unsigned char *data, unsigned datalen, ushort _raw_width, ushort _raw_height, ushort _left_margin, ushort _top_margin, ushort _right_margin, ushort _bottom_margin, unsigned char procflags, unsigned char bayer_pattern, unsigned unused_bits, unsigned otherflags, unsigned black_level)
             int open_file(const char *fname)
             int unpack()
             int unpack_thumb()
@@ -422,6 +424,21 @@ cdef class RawPy:
         self.bytes = fileobj.read()
         cdef char *buf = self.bytes
         self.handle_error(self.p.open_buffer(buf, len(self.bytes)))        
+
+    def open_bayer(self, data, size, width, height, left_margin, top_margin, right_margin, bottom_margin, procflags, bayer_pattern, unused_bits, otherflags, black_level):
+        """
+        Opens the given buffer. Should be followed by a call to :meth:`~rawpy.RawPy.unpack`.
+        
+        .. NOTE:: This is a low-level method, consider using :func:`rawpy.imread` instead.
+        
+        :param file fileobj: The file-like object.
+        """
+        self.unpack_called = False
+        self.unpack_thumb_called = False
+        # we keep a reference to the byte buffer to avoid garbage collection
+        self.bytes = data
+        cdef unsigned char *buf = self.bytes
+        self.handle_error(self.p.open_bayer(buf, size, width, height, left_margin, top_margin, right_margin, bottom_margin, procflags, bayer_pattern, unused_bits, otherflags, black_level))        
     
     def unpack(self):
         """

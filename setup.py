@@ -20,7 +20,7 @@ from Cython.Build import cythonize
 #       for the library on the system.
 # Note: Building GPL demosaic packs only works with libraw <= 0.18.
 #       See https://github.com/letmaik/rawpy/issues/72.
-buildGPLCode = os.getenv('RAWPY_BUILD_GPL_CODE') == '1'
+buildGPLCode = True #os.getenv('RAWPY_BUILD_GPL_CODE') == '1'
 
 # don't treat mingw as Windows (https://stackoverflow.com/a/51200002)
 isWindows = os.name == 'nt' and 'GCC' not in sys.version
@@ -191,8 +191,8 @@ def windows_libraw_compile():
                     '-DENABLE_X3FTOOLS=ON -DENABLE_6BY9RPI=ON ' +\
                     '-DENABLE_EXAMPLES=OFF -DENABLE_OPENMP=' + enable_openmp_flag + ' -DENABLE_RAWSPEED=OFF ' +\
                     ('-DENABLE_DEMOSAIC_PACK_GPL2=ON -DDEMOSAIC_PACK_GPL2_RPATH=../../LibRaw-demosaic-pack-GPL2 ' +\
-                     '-DENABLE_DEMOSAIC_PACK_GPL3=ON -DDEMOSAIC_PACK_GPL3_RPATH=../../LibRaw-demosaic-pack-GPL3 '
-                     if buildGPLCode else '') +\
+                    '-DENABLE_DEMOSAIC_PACK_GPL3=ON -DDEMOSAIC_PACK_GPL3_RPATH=../../LibRaw-demosaic-pack-GPL3 '
+                    if buildGPLCode else '') +\
                     zlib_flag +\
                     '-DCMAKE_INSTALL_PREFIX=install',
             cmake + ' --build . --target install',
